@@ -1,38 +1,20 @@
 <?php
-$pluem = new classadmin_bypluem;
-$history_topup = $pluem->history_topup();
+include '../../config/class.php';
+$pluem = new classweb_bypluem;
+if(empty($_SESSION['id'])){
+    echo json_encode(array('status'=>"error",'message'=>"กรุณาเข้าสู่ระบบ"));
+}elseif(empty($_POST['link_topup'])){
+    echo json_encode(array('status'=>"error",'message'=>"กรุณากรอกข้อมูลให้ครบ"));
+}elseif ($_POST['link_topup'][0] !== "h") {
+    echo json_encode(array('status'=>"error",'message'=>"กรุณากรอกอั่งเปาให้ถูกต้อง"));
+}else{
+    $string = "https://gift.truemoney.com/campaign/?v=";
+	$voucher = $_POST['link_topup'];
+	$link_topup = explode("?v=", $voucher)[1];
+    if(empty($link_topup)){
+        echo json_encode(array('status'=>"error",'message'=>"กรุณากรอกอั่งเปาให้ถูกต้อง"));
+    }else{
+        $topup = $pluem->topup($link_topup);
+    }
+}
 ?>
-<div class="container mt-3 text-center">
-    <div class="row">
-        <div class="col-12">
-            <div class="card card-backend">
-                <div class="card-body">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">ลำดับ</th>
-                                <th scope="col">ชื่อผู้ใช้</th>
-                                <th scope="col">ชื่อบัญชี</th>
-                                <th scope="col">จำนวนเงิน</th>
-                                <th scope="col">ลิงค์</th>
-                                <th scope="col">วันที่-เวลา</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach($history_topup as $row){ ?>
-                                <tr>
-                                    <th scope="row"><?php echo $row['id']; ?></th>
-                                    <td><?php echo $row['username']; ?></td>
-                                    <td><?php echo $row['name']; ?></td>
-                                    <td><?php echo $row['amount']; ?></td>
-                                    <td><?php echo $row['link']; ?></td>
-                                    <td><?php echo $row['date']; ?></td>
-                                </tr>
-                            <?php } ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
